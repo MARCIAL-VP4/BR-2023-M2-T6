@@ -5,7 +5,7 @@ from dino_runner.components.dinosaur import Dinosaur
 
 
 class Game:
-    def __init__(self):
+    def _init_(self):
         pygame.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
