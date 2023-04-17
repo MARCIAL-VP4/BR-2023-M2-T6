@@ -6,7 +6,7 @@ from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 
 
 class Game:
-    def _init_(self):
+    def __init__(self):
         pygame.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
