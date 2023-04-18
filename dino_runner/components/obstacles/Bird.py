@@ -9,7 +9,6 @@ class Bird(Obstacle):
         self.rect.y = 200
         self.index = 0
     
-    
     def draw(self, screen):
        if self.index >= 10:
           self.index = 0
