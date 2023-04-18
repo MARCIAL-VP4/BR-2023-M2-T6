@@ -5,6 +5,7 @@ from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 
 FONT_STYLE = "freesansbold.ttf"
+GAME_SPEED = 20
 
 class Game:
     def __init__(self): 
@@ -15,7 +16,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.playing = False
         self.running = False
-        self.game_speed = 20
+        self.game_speed = GAME_SPEED
         self.score = 0
         self.death_count = 0
         self.x_pos_bg = 0
@@ -59,11 +60,12 @@ class Game:
             self.game_speed += 5
 
     def draw_score(self):
-        font = pygame.font.Font(FONT_STYLE, 22)
-        text = font.render(f"Score: {self.score}", True, (0, 0, 0))
-        text_rect = text.get_rect()
-        text_rect.center = (1000, 50)
-        self.screen.blit (text, text_rect)
+        self.make_menu(f"Score: {self.score}",(1000, 50))
+        #font = pygame.font.Font(FONT_STYLE, 22)
+        #text = font.render(f"Score: {self.score}", True, (0, 0, 0))
+        #text_rect = text.get_rect()
+        #text_rect.center = (1000, 50)
+        #self.screen.blit (text, text_rect)
 
     def draw(self):
         self.clock.tick(FPS)
@@ -90,7 +92,24 @@ class Game:
                 self.playing = False
                 self.running = False
             elif event.type == pygame.KEYDOWN:
+                self.score = 0
+                self.game_speed = GAME_SPEED
                 self.run()
+
+    #def make_text(self, final_text):
+        #font = pygame.font.Font(FONT_STYLE, 22)
+        #text = font.render(final_text, True, (0, 0, 0))
+        #return text
+
+    def make_menu(self, create_text, position):
+        half_screen_height = SCREEN_HEIGHT // 2
+        half_screen_width = SCREEN_WIDTH // 2
+        font = pygame.font.Font(FONT_STYLE, 22)
+        text = font.render(create_text, True, (0, 0, 0))
+        text_rect = text.get_rect()
+        text_rect.center = (position)
+        self.screen.blit(text, text_rect)
+
 
     def show_menu(self):
         self.screen.fill((255, 255, 255))
@@ -98,20 +117,27 @@ class Game:
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            font = pygame.font.Font(FONT_STYLE, 22)
-            text = font.render("Press any key to start", True, (0, 0, 0))
-            text_rect = text.get_rect()
-            text_rect.center = (half_screen_width, half_screen_height)
-            self.screen.blit(text, text_rect)
+            self.make_menu("Press any key to start", (half_screen_width, half_screen_height))
+            #font = pygame.font.Font(FONT_STYLE, 22)
+            #text = font.render("Press any key to start", True, (0, 0, 0))
+            #text_rect = text.get_rect()
+            #text_rect.center = (half_screen_width, half_screen_height)
+            #self.screen.blit(text, text_rect)
         else:
-            self.screen.blit(ICON, (half_screen_width - 20, half_screen_height - 140))
+            self.make_menu(f"Press any key to restart. Number deth {self.death_count} (Score {self.score}!)",(half_screen_width, half_screen_height))
+            #font = pygame.font.Font(FONT_STYLE, 22)
+            #text = font.render(f"Press any key to restart. Number deth {self.death_count}. Score {self.score}", True, (0, 0, 0))
+            #text_rect = text.get_rect()
+            #text_rect.center = (half_screen_width, half_screen_height)
+            #self.screen.blit(text, text_rect)
+            self.screen.blit(ICON, (half_screen_height + 200, half_screen_width - 400)) # self.screen.blit(ICON, (half_screen_height - 20, half_screen_width - 140))
+            #self.game_speed = GAME_SPEED
             ## mostrar mensagem de "Press any key to restart"
             ## mostrar score atingido
             ## mostrar death_count
 
             ### Resetar score e game_speed quando o jogo for 'restartado'
             ### Criar método para remover a repetição de código para o texto
-
-        pygame.display.flip()  # .update()
-
-        self.handle_events_on_menu()
+        pygame.display.update()  # .update()
+        
+        self.handle_events_on_menu()  
