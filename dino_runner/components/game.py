@@ -102,8 +102,6 @@ class Game:
         #return text
 
     def make_menu(self, create_text, position):
-        half_screen_height = SCREEN_HEIGHT // 2
-        half_screen_width = SCREEN_WIDTH // 2
         font = pygame.font.Font(FONT_STYLE, 22)
         text = font.render(create_text, True, (0, 0, 0))
         text_rect = text.get_rect()
