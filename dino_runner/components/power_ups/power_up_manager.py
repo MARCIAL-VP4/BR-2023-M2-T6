@@ -3,7 +3,7 @@ import pygame
 
 from dino_runner.components.power_ups.shield import Shield
 from dino_runner.components.power_ups.hammer import Hammer
-from dino_runner.components.power_ups.star import Star
+from dino_runner.components.power_ups.clock import Clock
 
 
 
@@ -15,7 +15,7 @@ class PowerUpManager:
     def generate_power_up(self, score):
         if len(self.power_ups) == 0 and self.when_appears == score:
             self.when_appears += random.randint(200, 300)
-            power_list = [Shield(), Hammer(), Star()]
+            power_list = [Shield(), Hammer(), Clock()]
             random_power = random.choice(power_list)
             self.power_ups.append(random_power)
 
@@ -28,7 +28,7 @@ class PowerUpManager:
                 power_up.start_time = pygame.time.get_ticks()
                 game.player.shield = True
                 game.player.hammer = False
-                game.player.star = False
+                game.player.clock = False
                 game.player.has_power_up = True
                 game.player.type = power_up.type
                 game.player.power_up_time = power_up.start_time + (power_up.duration * 1000)
@@ -41,15 +41,15 @@ class PowerUpManager:
                 game.player.hammer = True
                 game.player.has_power_up = True
                 game.player.shield = False
-                game.player.star = False
+                game.player.clock = False
                 game.player.type = power_up.type
                 game.player.power_up_time = power_up.start_time + (power_up.duration * 1000)
 
                 self.power_ups.remove(power_up)
 
-            elif game.player.dino_rect.colliderect(power_up.rect) and power_up.type == "star" :
+            elif game.player.dino_rect.colliderect(power_up.rect) and power_up.type == "clock" :
                 power_up.start_time = pygame.time.get_ticks()
-                game.player.star = True
+                game.player.clock = True
                 game.player.has_power_up = True
                 game.player.shield = False
                 game.player.hammer = False
@@ -57,12 +57,7 @@ class PowerUpManager:
                 game.player.power_up_time = power_up.start_time + (power_up.duration * 1000)
 
                 self.power_ups.remove(power_up)
-
-
-
-            
-
-
+                
     def draw(self, screen):
         for power_up in self.power_ups:
             power_up.draw(screen)

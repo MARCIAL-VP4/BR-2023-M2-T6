@@ -1,13 +1,9 @@
 import pygame
 import random
 
-from dino_runner.components.obstacles.cactus import Cactus
-from dino_runner.components.obstacles.Large_cactus import Large_cactus
+from dino_runner.components.obstacles.cactus import Cactus, Large_cactus
 from dino_runner.components.obstacles.Bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS
-from dino_runner.utils.constants import LARGE_CACTUS
-from dino_runner.utils.constants import BIRD
-
+from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD
 
 class ObstacleManager:
     def __init__(self):
@@ -28,16 +24,18 @@ class ObstacleManager:
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
-                if not game.player.has_power_up:       #Estudar esse método
+                if not game.player.has_power_up:    
                     pygame.time.delay(500)
-                    game.playing = False	                    
+                    game.playing = False
+                    #por a musica de quando morrer aqui
+                    game.best_score.append(game.score) 	                    
                     game.death_count += 1	                    
                     break
                 
                 elif game.player.hammer:
                     self.obstacles.remove(obstacle)
 
-                elif game.player.star:
+                elif game.player.clock:
                     game.game_speed = 20
                 
                 elif game.player.shield:

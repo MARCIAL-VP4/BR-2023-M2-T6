@@ -1,6 +1,6 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
+from dino_runner.utils.constants import BG, ICON, MENU, MENU_SOUND, RUNNING_SOUND, GRAMA, SCREEN_HEIGHT, GAME_OVER, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
@@ -19,6 +19,7 @@ class Game:
         self.running = False
         self.game_speed = GAME_SPEED
         self.score = 0
+        self.best_score = []
         self.death_count = 0
         self.x_pos_bg = 0
         self.y_pos_bg = 380
@@ -31,13 +32,19 @@ class Game:
         while self.running:
             if not self.playing:
                 self.show_menu()
+                MENU_SOUND.play()
+                #por a musica do menu aqui 
 
         pygame.display.quit()
         pygame.quit()
 
     def run(self):
         # Game loop: events - update - draw
+        self.score = 0
+        self.game_speed = GAME_SPEED
         self.playing = True
+        RUNNING_SOUND.play()
+        #por a musica de quando começar o jogo aqui
         self.obstacle_manager.reset_obstacles()
         self.power_up_manager.reset_power_ups()
         while self.playing:
@@ -68,18 +75,22 @@ class Game:
             time_to_show = round((self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)
 
             if time_to_show >= 0:
-                self.make_menu(
+                self.make_text(
                     f"{self.player.type.capitalize()} enabled for {time_to_show} seconds",(500,40),tamanho_da_fonte = 18)
             else:
                 self.player.has_power_up = False
                 self.player.type = DEFAULT_TYPE
 
     def draw_score(self):
-        self.make_menu(f"Score: {self.score}",(1000, 50))
+        if self.death_count == 0:
+            self.make_text(f"Score: {self.score}",(1000, 50))
+        elif self.death_count > 0:
+            self.make_text(f"Score: {self.score}",(1000, 50))
+            self.make_text(f"Best score: {max(self.best_score)}",(120, 50), cores = (0,255,0))
 
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255)) # '#FFFFFF'
+        self.screen.fill((255, 255, 255))
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
@@ -104,13 +115,12 @@ class Game:
                 self.playing = False
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                self.score = 0
-                self.game_speed = GAME_SPEED
+                MENU_SOUND.stop()
                 self.run()
 
-    def make_menu(self,create_text, position, tamanho_da_fonte = 22):
+    def make_text(self,create_text, position, tamanho_da_fonte = 22, cores = (0,0,0)):
         font = pygame.font.Font(FONT_STYLE, tamanho_da_fonte)
-        text = font.render(create_text, True, (0, 0, 0))
+        text = font.render(create_text, True, cores)
         text_rect = text.get_rect()
         text_rect.center = (position)
         self.screen.blit(text, text_rect)
@@ -122,13 +132,20 @@ class Game:
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            self.make_menu("Press any key to start", (half_screen_width, half_screen_height))
-           
+            self.make_text("Press any key to start", (half_screen_width, half_screen_height))
+            self.screen.blit(MENU, (half_screen_height, half_screen_width - 430))
+            self.screen.blit(GRAMA, (half_screen_height - 300, half_screen_width - 350))
+            #aqui imagem para decorar o menu
         else:
-            self.make_menu(f"Press any key to restart. Number death {self.death_count} (Score {self.score}!)",(half_screen_width, half_screen_height))
-
-            self.screen.blit(ICON, (half_screen_height + 200, half_screen_width - 400)) # self.screen.blit(ICON, (half_screen_height - 20, half_screen_width - 140))
+            RUNNING_SOUND.stop()
+            MENU_SOUND.stop()
+            self.make_text(f"Press any key to restart.",(half_screen_width, half_screen_height))
+            self.make_text(f"Score: {self.score - 1}",(half_screen_width, half_screen_height + 30))
+            self.make_text(f"Best score: {max(self.best_score)}",(half_screen_width, half_screen_height + 60), cores = (0,255,0))
+            self.make_text(f"Number death: {self.death_count}", (half_screen_width, half_screen_height + 90), cores = (255,0,0))
+            self.screen.blit(ICON, (half_screen_height + 200, half_screen_width - 400))
+            self.screen.blit(GAME_OVER, (half_screen_height + 60, half_screen_width - 120))
             
-        pygame.display.update()  # .update()
+        pygame.display.update()
         
         self.handle_events_on_menu()  

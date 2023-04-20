@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
-from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, DEFAULT_TYPE, STAR, STAR_TYPE
+from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, DEFAULT_TYPE,CLOCK_TYPE, JUMPING_SOUND
 from dino_runner.utils.constants import SHIELD_TYPE, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD
 from dino_runner.utils.constants import HAMMER_TYPE, DUCKING_HAMMER, JUMPING_HAMMER, RUNNING_HAMMER
 
@@ -11,9 +11,9 @@ Y_POS = 310
 DUNK_DOWN = 340
 JUMP_VEL = 8.5
 
-DUCK_IMG = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD, HAMMER_TYPE: DUCKING_HAMMER, STAR_TYPE: DUCKING}
-JUMP_IMG = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD, HAMMER_TYPE: JUMPING_HAMMER, STAR_TYPE: JUMPING}
-RUN_IMG = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD, HAMMER_TYPE: RUNNING_HAMMER, STAR_TYPE: RUNNING}
+DUCK_IMG = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD, HAMMER_TYPE: DUCKING_HAMMER, CLOCK_TYPE: DUCKING}
+JUMP_IMG = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD, HAMMER_TYPE: JUMPING_HAMMER, CLOCK_TYPE: JUMPING}
+RUN_IMG = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD, HAMMER_TYPE: RUNNING_HAMMER, CLOCK_TYPE: RUNNING}
 
 class Dinosaur(Sprite):
     def __init__(self):
@@ -33,7 +33,7 @@ class Dinosaur(Sprite):
         self.has_power_up = False
         self.shield = False
         self.hammer = False 
-        self.star = False
+        self.clock = False
         self.show_text = False
         self.power_up_time = 0
 
@@ -47,6 +47,7 @@ class Dinosaur(Sprite):
 
         if user_input[pygame.K_UP] and not self.dino_jump:
             self.dino_jump = True
+            JUMPING_SOUND.play()
             self.dino_run = False
             self.dino_duck = False
         elif not (self.dino_jump or user_input[pygame.K_DOWN]):
